@@ -1,48 +1,6 @@
 import pandas as pd
 import os
-
-# --- Category Definitions ---
-health_categories = {
-    "CBC": {
-        "Hemoglobin", "Platelets", "White Blood Cells", "Red Blood Cells", "Hematocrit",
-        "Mean Corpuscular Volume", "Mean Corpuscular Hemoglobin", "Mean Corpuscular Hemoglobin Concentration"
-    },
-    "Lipid Profile": {
-        "Cholesterol", "Total Cholesterol", "LDL Cholesterol", "HDL Cholesterol", "Triglycerides"
-    },
-    "Blood Glucose Levels": {
-        "Glucose", "HbA1c", "Insulin"
-    },
-    "Organ Function Tests": {
-        "ALT", "AST", "ALP", "Creatinine", "GFR", "C-reactive Protein"
-    },
-    "Urine Test": {
-        "Urine Protein", "Urine Glucose", "Urine Ketones", "Urine pH", "Specific Gravity",
-        "Nitrites", "Leukocyte Esterase"
-    },
-    "Vitals": {
-        "BMI", "Systolic Blood Pressure", "Diastolic Blood Pressure", "Heart Rate"
-    },
-    "Cardiac Markers": {
-        "Troponin"
-    }
-}
-
-# --- Mapper Function ---
-def map_columns_to_categories(column_names):
-    result = {category: [] for category in health_categories}
-
-    for col in column_names:
-        matched = False
-        for category, known_features in health_categories.items():
-            if col.strip() in known_features:
-                result[category].append(col.strip())
-                matched = True
-                break
-        if not matched:
-            result.setdefault("Uncategorized", []).append(col.strip())
-
-    return {cat: cols for cat, cols in result.items() if cols}
+from map_categories import map_columns_to_categories
 
 def read_file(filepath):
     ext = os.path.splitext(filepath)[1].lower()
