@@ -1,6 +1,6 @@
 import pandas as pd
 import random
-from transformers import T5Tokenizer, T5ForConditionalGeneration, Trainer, TrainingArguments
+from transformers import T5Tokenizer, T5ForConditionalGeneration, Trainer, TrainingArguments, AutoTokenizer, AutoModelForSeq2SeqLM
 import datasets
 
 # --- Step 1: Load ranges from Excel ---
@@ -11,7 +11,7 @@ def load_ranges_from_excel(file_path):
     for sheet in xls.sheet_names:
         df = pd.read_excel(xls, sheet_name=sheet)
         df.columns = [col.strip() for col in df.columns]
-
+        print("df.columns",df.columns)
         if 'Parameter' in df.columns:
             param_col = 'Parameter'
         elif 'Value' in df.columns:
@@ -67,7 +67,7 @@ def generate_synthetic_examples(param_dict, sheet_name, num_examples=20):
 
             # Compose input string
             unit_str = f" {unit}" if unit else ""
-            input_parts.append(f"{param}: {val}{unit_str}")
+            input_parts.append(f"{param}: {val}")
 
             if status != 'normal':
                 abnormalities.append((param, status))
@@ -98,9 +98,12 @@ def prepare_dataset(file_path, examples_per_sheet=20):
     for sheet, param_dict in all_ranges.items():
         print(f"Generating data for sheet: {sheet} ({len(param_dict)} params)")
         examples = generate_synthetic_examples(param_dict, sheet, examples_per_sheet)
+        print("examples",examples)
         for inp, tgt in examples:
             dataset["input_text"].append(inp)
+            print("input_text",inp)
             dataset["target_text"].append(tgt)
+            print("output_text",tgt)
 
     return dataset
 
@@ -120,9 +123,11 @@ def preprocess_for_t5(tokenizer, dataset, max_len=128):
 
 # --- Step 5: Fine-tune model ---
 def fine_tune_t5(tokenized_ds, output_dir="./t5_finetuned", epochs=3):
-    model_name = "t5-small"
-    tokenizer = T5Tokenizer.from_pretrained(model_name)
-    model = T5ForConditionalGeneration.from_pretrained(model_name)
+    model_name = "google-t5/t5-small"
+    tokenizer = AutoTokenizer.from_pretrained('./t5-small',local_files_only=True)
+    model = AutoModelForSeq2SeqLM.from_pretrained('./t5-small',local_files_only=True)
+    # tokenizer = T5Tokenizer.from_pretrained(model_name,token="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")
+    # model = T5ForConditionalGeneration.from_pretrained(model_name,token="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")
 
     training_args = TrainingArguments(
         output_dir=output_dir,
