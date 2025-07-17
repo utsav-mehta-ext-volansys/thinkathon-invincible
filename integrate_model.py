@@ -1,11 +1,16 @@
 import pandas as pd
 from transformers import T5Tokenizer, T5ForConditionalGeneration, AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
+from peft import PeftModel
 
 # Load fine-tuned model and tokenizer
-model_path = "./t5_finetuned"
-tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_path, local_files_only=True)
+model_path = "./t5_lora_finetuned_new"
+# tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+# model = AutoModelForSeq2SeqLM.from_pretrained(model_path, local_files_only=True)
+tokenizer = T5Tokenizer.from_pretrained("./t5_lora_finetuned_new")
+base_model = T5ForConditionalGeneration.from_pretrained("t5-small")
+model = PeftModel.from_pretrained(base_model, "./t5_lora_finetuned_new")
+
 model.eval()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
