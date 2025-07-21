@@ -244,7 +244,7 @@ def infer(model, tokenizer, input_text):
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    excel_file = "Template for report_new.xlsx"  # Update this to your real file path
+    excel_file = "reference_excel.xlsx"  # Update this to your real file path
 
     print("⏳ Preparing dataset...")
     dataset_dict = prepare_dataset(excel_file, examples_per_sheet=50)
