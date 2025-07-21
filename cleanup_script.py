@@ -107,7 +107,6 @@ def main():
 
     # Perform range checking and flagging
     df = flag_out_of_range(df, reference_sheets, category_mapping)
-    print(f"\nProcessed file saved to: {output_path}")
     prepare_data(df)
 
 if __name__ == "__main__":
