@@ -1,9 +1,0 @@
-Dataset UCI
-
-| Category                       | Columns from your list                                                                                                                                               |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **CBC (Complete Blood Count)** | Hemoglobin (HGB)                                                                                                                                                     |
-| **Lipid Profile**              | Total Cholesterol (TC), Low Density Lipoprotein (LDL), High Density Lipoprotein (HDL), Triglyceride                                                                  |
-| **Blood Glucose Levels**       | Glucose                                                                                                                                                              |
-| **Organ Function Tests**       | Aspartate Aminotransferase (AST), Alanine Aminotransferase (ALT), Alkaline Phosphatase (ALP), Creatinine, Glomerular Filtration Rate (GFR), C-Reactive Protein (CRP) |
-| **Urine Test**                 | *None present in your list* (No direct urine test parameters like proteinuria, RBCs in urine, etc.)                                                                  |

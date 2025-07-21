@@ -20,7 +20,6 @@ def prepare_data(df):
     df_features.fillna(df_features.mean(), inplace=True)
     X = df_features
     feature_cols = df_features.columns.tolist()
-    df_features.to_csv("df_features.csv")
     ai_df = add_ai_recommendations(df_features, feature_cols)
     
-    ai_df.to_csv("ai_df.csv", index=False)
+    ai_df.to_csv("output.csv", index=False)
