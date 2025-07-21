@@ -112,9 +112,7 @@ def main():
     ml_path = "ml_input.csv"
     df.to_csv(output_path, index=False)
     print(f"\nProcessed file saved to: {output_path}")
-    # ml_df = prepare_data(df)
     prepare_data(df)
-    # ml_df.to_csv(ml_path, index=False)
 
 if __name__ == "__main__":
     main()

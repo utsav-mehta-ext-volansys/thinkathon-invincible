@@ -167,7 +167,6 @@ def fine_tune_peft(train_ds, val_ds, output_dir="./recommendation_model", epochs
         learning_rate=5e-4,
         weight_decay=0.01,
         warmup_steps=100,
-        # predict_with_generate=True,
         logging_dir=f"{output_dir}/logs",
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
@@ -179,13 +178,10 @@ def fine_tune_peft(train_ds, val_ds, output_dir="./recommendation_model", epochs
         metric = evaluate.load("rouge")
         predictions, labels = eval_pred
 
-        # ✅ Convert logits to predicted token IDs
         if isinstance(predictions, tuple):  # Handle Trainer output
             predictions = predictions[0]
         pred_ids = np.argmax(predictions, axis=-1)  # shape: (batch, seq_len)
 
-        print("✅ pred_ids[0]:", pred_ids[0][:10])
-        print("✅ labels[0]:", labels[0][:10])
 
         # Decode predictions
         decoded_preds = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
@@ -196,10 +192,6 @@ def fine_tune_peft(train_ds, val_ds, output_dir="./recommendation_model", epochs
             for label_seq in labels
         ]
         decoded_labels = tokenizer.batch_decode(cleaned_labels, skip_special_tokens=True)
-
-        # Log decoded text
-        print("📝 Decoded prediction sample:", decoded_preds[0])
-        print("📝 Decoded label sample:", decoded_labels[0])
 
         # Compute ROUGE
         result = metric.compute(predictions=decoded_preds, references=decoded_labels, use_stemmer=True)
@@ -221,7 +213,7 @@ def fine_tune_peft(train_ds, val_ds, output_dir="./recommendation_model", epochs
     trainer.train()
     trainer.save_model(output_dir)
     tokenizer.save_pretrained(output_dir)
-    print(f"✅ Model fine-tuned and saved at {output_dir}")
+    print(f"fine-tuned and saved at {output_dir}")
 
     return model, tokenizer
 
@@ -246,19 +238,19 @@ def infer(model, tokenizer, input_text):
 if __name__ == "__main__":
     excel_file = "reference_excel.xlsx"  # Update this to your real file path
 
-    print("⏳ Preparing dataset...")
+    # prepare dataset
     dataset_dict = prepare_dataset(excel_file, examples_per_sheet=50)
 
-    print("⏳ Tokenizing dataset...")
+    # pre-process tokenized model
     tokenized_dataset = preprocess_for_t5(T5Tokenizer.from_pretrained("./t5-small"), dataset_dict)
 
-    print("⏳ Splitting train and validation datasets...")
+    # split train and val dataset
     train_dataset, val_dataset = train_val_split(tokenized_dataset, val_ratio=0.1)
 
-    print("⏳ Starting fine-tuning with PEFT LoRA...")
+    # fine tuning model
     model, tokenizer = fine_tune_peft(train_dataset, val_dataset, epochs=8)
 
-    print("⏳ Running inference on test input...")
+    # trying test input
 
     test_input = ("White Blood Cells: 7695.25; Neutrophils (%): 56.22 %; Lymphs (%): 29.3 %; Monocytes (%): 12.0 %; "
                   "Eos (%): 1.93 %; Basos (%): 0.39 %; Platelets: 309636.87; Red Blood Cells: 4.23; Hemoglobin: 13.39; "
@@ -268,4 +260,4 @@ if __name__ == "__main__":
                   "Immature Granulocytes: 21; Immature Grans (Abs): 8")
 
     result = infer(model, tokenizer, test_input)
-    print("📝 Model Output:\n", result)
+    print("Model Output:\n", result)
