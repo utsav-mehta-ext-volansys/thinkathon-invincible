@@ -4,12 +4,12 @@ import torch
 from peft import PeftModel
 
 # Load fine-tuned model and tokenizer
-model_path = "./t5_lora_finetuned_new"
+model_path = "./recommendation_model"
 # tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
 # model = AutoModelForSeq2SeqLM.from_pretrained(model_path, local_files_only=True)
-tokenizer = T5Tokenizer.from_pretrained("./t5_lora_finetuned_new")
+tokenizer = T5Tokenizer.from_pretrained("./recommendation_model")
 base_model = T5ForConditionalGeneration.from_pretrained("t5-small")
-model = PeftModel.from_pretrained(base_model, "./t5_lora_finetuned_new")
+model = PeftModel.from_pretrained(base_model, "./recommendation_model")
 
 model.eval()
 

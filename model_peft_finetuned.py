@@ -133,7 +133,7 @@ def train_val_split(tokenized_dataset, val_ratio=0.1):
     return train_test['train'], train_test['test']
 
 # --- Step 6: Fine-tune T5 with LoRA PEFT ---
-def fine_tune_peft(train_ds, val_ds, output_dir="./t5_lora_finetuned_new", epochs=8):
+def fine_tune_peft(train_ds, val_ds, output_dir="./recommendation_model", epochs=8):
     model_name = "./t5-small"
     tokenizer = T5Tokenizer.from_pretrained(model_name)
     base_model = T5ForConditionalGeneration.from_pretrained(model_name)
