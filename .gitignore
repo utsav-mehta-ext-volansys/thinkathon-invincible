@@ -194,3 +194,4 @@ cython_debug/
 .cursorindexingignore
 t5*/
 all-mpnet-base-v2/
+node_modules/

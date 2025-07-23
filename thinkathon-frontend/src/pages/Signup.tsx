@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Heart, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import {signup} from "@/api/authAPI"
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -40,16 +41,37 @@ export default function Signup() {
     }
 
     setIsLoading(true);
-
+    const body = {
+      full_name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      confirm_password: formData.confirmPassword,
+    }
     // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await signup(body);
+    
       toast({
         title: "Account Created!",
-        description: "Welcome to HealthCare+. Your account has been created successfully.",
+        description: "Your account has been created successfully. Please log in.",
       });
-      navigate("/dashboard");
-    }, 1500);
+    
+      navigate("/login");
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.detail ||
+        err?.message ||
+        "Something went wrong during signup";
+    
+      toast({
+        title: "Signup failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+    
   };
 
   return (

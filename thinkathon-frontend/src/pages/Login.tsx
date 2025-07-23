@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Heart, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import {login} from "@/api/authAPI"
+
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,16 +20,35 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+    const body = {email,password}
     // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const response = await login(body);
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in to your account.",
       });
       navigate("/dashboard");
-    }, 1500);
+      // Store token
+      localStorage.setItem("token", response.access_token);
+      localStorage.setItem("user", JSON.stringify(response.user));
+  
+      
+  
+      
+    }  catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.detail ||
+        err?.message ||
+        "Something went wrong during signup";
+      toast({
+        title: "Login failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
