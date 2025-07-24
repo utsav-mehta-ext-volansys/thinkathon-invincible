@@ -2,12 +2,14 @@ import pandas as pd
 from transformers import T5Tokenizer, T5ForConditionalGeneration, AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
 from peft import PeftModel
+import os
 
 # Load fine-tuned model and tokenizer
-model_path = "./recommendation_model"
-tokenizer = T5Tokenizer.from_pretrained("./recommendation_model")
-base_model = T5ForConditionalGeneration.from_pretrained("t5-small")
-model = PeftModel.from_pretrained(base_model, "./recommendation_model")
+model_path = "/home/utsav/Utsav's/Thinkathon/Code/thinkathon-invincible/recommendation_model"
+t5_model_path = "/home/utsav/Utsav's/Thinkathon/Code/thinkathon-invincible/t5-small"
+tokenizer = T5Tokenizer.from_pretrained(model_path)
+base_model = T5ForConditionalGeneration.from_pretrained(t5_model_path)
+model = PeftModel.from_pretrained(base_model, model_path)
 
 model.eval()
 

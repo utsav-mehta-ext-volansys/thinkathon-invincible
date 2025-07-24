@@ -23,3 +23,4 @@ def prepare_data(df):
     ai_df = add_ai_recommendations(df_features, feature_cols)
     
     ai_df.to_csv("output.csv", index=False)
+    return ai_df
