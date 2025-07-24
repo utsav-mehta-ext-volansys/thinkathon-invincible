@@ -3,7 +3,13 @@ from fastapi.responses import JSONResponse
 import pandas as pd
 import os
 import shutil
-from your_script import read_file, read_ref_file, flag_out_of_range
+import sys
+
+# Adjust this to the actual absolute or relative path to your_script.py
+SCRIPT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+if SCRIPT_DIR not in sys.path:
+    sys.path.append(SCRIPT_DIR)
+from cleanup_script import read_file, read_ref_file, flag_out_of_range
 from map_categories import map_columns_to_categories
 from prepare_ml_data import prepare_data
 
