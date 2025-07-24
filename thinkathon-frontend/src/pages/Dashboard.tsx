@@ -79,27 +79,55 @@ export default function Dashboard() {
   };
 
   const handleUploadSubmit = async () => {
-    if (!file) {
-      toast({
-        title: "No file selected",
-        description: "Please select a CSV file to upload.",
-        variant: "destructive",
-      });
-      return;
+  if (!file) {
+    toast({
+      title: "No file selected",
+      description: "Please select a CSV or Excel file to upload.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setIsUploading(true);
+  setShowResults(false);
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch("http://localhost:8000/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "File processing failed.");
     }
 
-    setIsUploading(true);
+    const result = await response.json();
+    console.log("Processed result:", result.data);
 
-    // Simulate API processing
-    setTimeout(() => {
-      setIsUploading(false);
-      setShowResults(true);
-      toast({
-        title: "Analysis Complete!",
-        description: "Your health data has been processed and analyzed.",
-      });
-    }, 3000);
-  };
+    // Optional: Store data for results page
+    // setProcessedData(result.data);
+
+    setShowResults(true);
+    toast({
+      title: "Analysis Complete!",
+      description: "Your health data has been processed and analyzed.",
+    });
+  } catch (error: any) {
+    console.error("Upload error:", error);
+    toast({
+      title: "Upload Failed",
+      description: error.message || "Something went wrong.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsUploading(false);
+  }
+};
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
