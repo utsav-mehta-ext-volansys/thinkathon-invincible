@@ -3,10 +3,11 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration, AutoTokenizer,
 import torch
 from peft import PeftModel
 import os
+from map_categories import map_columns_to_categories
 
 # Load fine-tuned model and tokenizer
-model_path = "/home/utsav/Utsav's/Thinkathon/Code/thinkathon-invincible/recommendation_model"
-t5_model_path = "/home/utsav/Utsav's/Thinkathon/Code/thinkathon-invincible/t5-small"
+model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/recommendation_model"
+t5_model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/t5-small"
 tokenizer = T5Tokenizer.from_pretrained(model_path)
 base_model = T5ForConditionalGeneration.from_pretrained(t5_model_path)
 model = PeftModel.from_pretrained(base_model, model_path)
@@ -38,14 +39,30 @@ def add_ai_recommendations(df, feature_cols):
     global df_features
     df_features = df[feature_cols]  # keep features subset handy
     
-    recommendations = []
-    for _, row in df.iterrows():
-        prompt = format_patient_prompt(row)
-        try:
-            rec = generate_recommendation(prompt)
-        except Exception as e:
-            rec = f"Error generating recommendation: {e}"
-        recommendations.append(rec)
+    # Map the feature columns to categories
+    category_columns = map_columns_to_categories(feature_cols)
     
-    df['AI_Recommendation'] = recommendations
+    # Prepare a list to hold recommendations per category per row
+    category_recommendations = {cat: [] for cat in category_columns}
+    
+    for _, row in df.iterrows():
+        for category, cols in category_columns.items():
+            # Extract the subset of features relevant to this category
+            category_data = row[cols]
+            
+            # Format prompt based only on category data
+            prompt = format_patient_prompt(category_data)
+            
+            try:
+                rec = generate_recommendation(prompt)
+            except Exception as e:
+                rec = f"Error generating recommendation: {e}"
+            
+            category_recommendations[category].append(rec)
+    
+    # Add a new column for each category with its recommendations
+    for category, recs in category_recommendations.items():
+        col_name = f"AI_Recommendation_{category.replace(' ', '_')}"
+        df[col_name] = recs
+    
     return df

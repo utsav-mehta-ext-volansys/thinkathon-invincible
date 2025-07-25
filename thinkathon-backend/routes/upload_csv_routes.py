@@ -5,7 +5,7 @@ import os
 import shutil
 import sys
 
-sys.path.append("/home/utsav/Utsav's/Thinkathon/Code/thinkathon-invincible/")
+sys.path.append("C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/")
 from cleanup_script import read_file, read_ref_file, flag_out_of_range
 from map_categories import map_columns_to_categories
 from prepare_ml_data import prepare_data
@@ -32,7 +32,7 @@ async def upload_file(file: UploadFile = File(...)):
 
     # Read reference Excel
     try:
-        reference_sheets = read_ref_file("/home/utsav/Utsav's/Thinkathon/Code/thinkathon-invincible/reference_excel.xlsx")
+        reference_sheets = read_ref_file("C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/reference_excel.xlsx")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error reading reference file: {e}")
 
