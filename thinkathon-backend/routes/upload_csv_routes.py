@@ -43,10 +43,23 @@ async def upload_file(file: UploadFile = File(...)):
 
     # Flag out-of-range values
     df = flag_out_of_range(df, reference_sheets, category_mapping)
+    
+    excluded_cols = ['Name', 'Age', 'ReportDate']
+    excluded_data = df[excluded_cols] if all(col in df.columns for col in excluded_cols) else pd.DataFrame()
+    
+    df = df.drop(columns=[col for col in excluded_cols if col in df.columns])
 
-    # Prepare ML data
-    processed_df = prepare_data(df)
-    print("processed_df",processed_df)
-    # Convert to JSON-friendly format
-    result = processed_df.to_dict(orient="records")
-    return JSONResponse(content={"data": result})
+    processed_data = prepare_data(df)
+    user_data = excluded_data.to_dict(orient="records")
+    user_info = user_data[0]
+
+    # processed_data is a dict with 'tests' key
+    final_output = {**user_info, **processed_data}
+
+    # final_output now contains Name, Age, ReportDate plus tests key
+    print(final_output)
+    # if not excluded_data.empty:
+    #     processed_df = pd.concat([excluded_data.reset_index(drop=True), processed_df.reset_index(drop=True)], axis=1)
+    # # Convert to JSON-friendly format
+    # result = processed_df.to_dict(orient="records")
+    return JSONResponse(content={"data": final_output})

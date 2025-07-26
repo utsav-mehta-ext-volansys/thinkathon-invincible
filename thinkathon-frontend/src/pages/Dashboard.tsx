@@ -21,53 +21,54 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
 // Mock patient data
-const mockPatientData = {
-  name: "John Doe",
-  age: 35,
-  lastUpdate: "2024-01-15",
-  tests: [
-    {
-      name: "Complete Blood Count (CBC)",
-      date: "2024-01-15",
-      status: "normal",
-      values: {
-        "White Blood Cells": { value: "7.2", unit: "K/μL", range: "4.0-11.0", status: "normal" },
-        "Red Blood Cells": { value: "4.8", unit: "M/μL", range: "4.2-5.8", status: "normal" },
-        "Hemoglobin": { value: "14.5", unit: "g/dL", range: "13.5-17.5", status: "normal" },
-        "Hematocrit": { value: "42.1", unit: "%", range: "38.0-50.0", status: "normal" },
-        "Platelets": { value: "280", unit: "K/μL", range: "150-450", status: "normal" }
-      },
-      recommendation: "Your blood count is within normal ranges. Continue your current health routine."
-    },
-    {
-      name: "Blood Pressure",
-      date: "2024-01-15",
-      status: "warning",
-      values: {
-        "Systolic": { value: "135", unit: "mmHg", range: "<120", status: "high" },
-        "Diastolic": { value: "88", unit: "mmHg", range: "<80", status: "high" }
-      },
-      recommendation: "Your blood pressure is elevated. Consider reducing sodium intake and consult your doctor."
-    },
-    {
-      name: "Lipid Panel",
-      date: "2024-01-10",
-      status: "critical",
-      values: {
-        "Total Cholesterol": { value: "240", unit: "mg/dL", range: "<200", status: "high" },
-        "LDL Cholesterol": { value: "165", unit: "mg/dL", range: "<100", status: "high" },
-        "HDL Cholesterol": { value: "42", unit: "mg/dL", range: ">40", status: "normal" },
-        "Triglycerides": { value: "185", unit: "mg/dL", range: "<150", status: "high" }
-      },
-      recommendation: "High cholesterol levels detected. Schedule an appointment with your doctor immediately to discuss treatment options."
-    }
-  ]
-};
+// const patientData = {
+//   name: "John Doe",
+//   age: 35,
+//   lastUpdate: "2024-01-15",
+//   tests: [
+//     {
+//       name: "Complete Blood Count (CBC)",
+//       date: "2024-01-15",
+//       status: "normal",
+//       values: {
+//         "White Blood Cells": { value: "7.2", unit: "K/μL", range: "4.0-11.0", status: "normal" },
+//         "Red Blood Cells": { value: "4.8", unit: "M/μL", range: "4.2-5.8", status: "normal" },
+//         "Hemoglobin": { value: "14.5", unit: "g/dL", range: "13.5-17.5", status: "normal" },
+//         "Hematocrit": { value: "42.1", unit: "%", range: "38.0-50.0", status: "normal" },
+//         "Platelets": { value: "280", unit: "K/μL", range: "150-450", status: "normal" }
+//       },
+//       recommendation: "Your blood count is within normal ranges. Continue your current health routine."
+//     },
+//     {
+//       name: "Blood Pressure",
+//       date: "2024-01-15",
+//       status: "warning",
+//       values: {
+//         "Systolic": { value: "135", unit: "mmHg", range: "<120", status: "high" },
+//         "Diastolic": { value: "88", unit: "mmHg", range: "<80", status: "high" }
+//       },
+//       recommendation: "Your blood pressure is elevated. Consider reducing sodium intake and consult your doctor."
+//     },
+//     {
+//       name: "Lipid Panel",
+//       date: "2024-01-10",
+//       status: "critical",
+//       values: {
+//         "Total Cholesterol": { value: "240", unit: "mg/dL", range: "<200", status: "high" },
+//         "LDL Cholesterol": { value: "165", unit: "mg/dL", range: "<100", status: "high" },
+//         "HDL Cholesterol": { value: "42", unit: "mg/dL", range: ">40", status: "normal" },
+//         "Triglycerides": { value: "185", unit: "mg/dL", range: "<150", status: "high" }
+//       },
+//       recommendation: "High cholesterol levels detected. Schedule an appointment with your doctor immediately to discuss treatment options."
+//     }
+//   ]
+// };
 
 export default function Dashboard() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [showResults, setShowResults] = useState(true); // Show mock data by default
+  const [showResults, setShowResults] = useState(false); // Show mock data by default
+  const [patientData, setPatientData] = useState(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -107,6 +108,7 @@ export default function Dashboard() {
 
     const result = await response.json();
     console.log("Processed result:", result.data);
+    setPatientData(result.data);
 
     // Optional: Store data for results page
     // setProcessedData(result.data);
@@ -170,7 +172,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span>Last updated: {mockPatientData.lastUpdate}</span>
+            <span>Last updated: {patientData && patientData?.lastUpdate}</span>
           </div>
         </div>
 
@@ -252,15 +254,15 @@ export default function Dashboard() {
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Name</p>
-                    <p className="font-semibold">{mockPatientData.name}</p>
+                    <p className="font-semibold">{patientData && patientData?.Name}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Age</p>
-                    <p className="font-semibold">{mockPatientData.age} years</p>
+                    <p className="font-semibold">{patientData && patientData?.Age} years</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Last Test</p>
-                    <p className="font-semibold">{mockPatientData.lastUpdate}</p>
+                    <p className="font-semibold">{patientData?.ReportDate}</p>
                   </div>
                 </div>
               </CardContent>
@@ -268,7 +270,7 @@ export default function Dashboard() {
 
             {/* Health Tests */}
             <div className="space-y-6">
-              {mockPatientData.tests.map((test, index) => (
+              {patientData && patientData?.tests?.map((test: any, index: any) => (
                 <Card 
                   key={index} 
                   className={`shadow-card-hover border-l-4 ${getStatusBg(test.status)} animate-fade-in`}
@@ -289,16 +291,16 @@ export default function Dashboard() {
                   <CardContent className="space-y-4">
                     {/* Test Values */}
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {Object.entries(test.values).map(([key, value]) => (
+                      {Object.entries(test.values).map(([key, value]: any) => (
                         <div key={key} className="space-y-1">
                           <p className="text-sm font-medium">{key}</p>
                           <div className="flex items-center justify-between">
                             <span className={`text-lg font-bold ${getStatusColor(value.status)}`}>
-                              {value.value} {value.unit}
+                              {value} {value.unit}
                             </span>
-                            <span className="text-xs text-muted-foreground">
+                            {/* <span className="text-xs text-muted-foreground">
                               Normal: {value.range}
-                            </span>
+                            </span> */}
                           </div>
                         </div>
                       ))}

@@ -1,5 +1,6 @@
 import pandas as pd
 from integrate_model import add_ai_recommendations
+from integrate_model_new import build_structured_recommendations
 
 def prepare_data(df):
     # Map flag strings to numbers
@@ -20,7 +21,8 @@ def prepare_data(df):
     df_features.fillna(df_features.mean(), inplace=True)
     X = df_features
     feature_cols = df_features.columns.tolist()
-    ai_df = add_ai_recommendations(df_features, feature_cols)
+    # ai_df = add_ai_recommendations(df_features, feature_cols)
+    ai_df = build_structured_recommendations(df_features)
     
-    ai_df.to_csv("output.csv", index=False)
+    # ai_df.to_csv("output.csv", index=False)
     return ai_df
