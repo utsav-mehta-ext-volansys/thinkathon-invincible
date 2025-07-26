@@ -159,6 +159,50 @@ export default function Dashboard() {
     }
   };
 
+  const handleDownload = () => {
+    if (!patientData || !patientData.tests) {
+      alert("No data available to export.");
+      return;
+    }
+
+    const rows = [];
+
+    // Optional: Add user info as first row
+    rows.push(["Name", "Age", "ReportDate"]);
+    rows.push([
+      patientData.Name || "",
+      patientData.Age || "",
+      patientData.ReportDate || "",
+    ]);
+    rows.push([]); // blank row for spacing
+
+    // Add headers for tests
+    patientData.tests.forEach((test) => {
+      rows.push([`Test: ${test.name}`]);
+      rows.push(["Parameter", "Value"]);
+      Object.entries(test.values).forEach(([param, value]) => {
+        rows.push([param, value]);
+      });
+      rows.push(["Recommendation", `"${test.recommendation}"`]);
+      rows.push([]); // spacing between tests
+    });
+
+    // Convert to CSV string
+    const csvContent = rows.map((row) => row.join(",")).join("\n");
+
+    // Create a blob and download link
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "health_report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   return (
     <div className="min-h-screen bg-background">
       <Header isAuthenticated={true} onLogout={() => navigate("/")} />
@@ -323,14 +367,11 @@ export default function Dashboard() {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
-              <Button className="bg-gradient-medical shadow-medical">
-                <Download className="mr-2 h-4 w-4" />
+              {showResults && <Button className="bg-gradient-medical shadow-medical" onClick={() => handleDownload()} >
+                <Download className="mr-2 h-4 w-4"/>
                 Download Report
               </Button>
-              <Button variant="outline">
-                <TrendingUp className="mr-2 h-4 w-4" />
-                View Trends
-              </Button>
+              }
               <Button 
                 variant="outline"
                 onClick={() => setShowResults(false)}
