@@ -5,7 +5,7 @@ import os
 import shutil
 import sys
 
-sys.path.append("C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/")
+sys.path.append("C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/scripts")
 from cleanup_script import read_file, read_ref_file, flag_out_of_range
 from map_categories import map_columns_to_categories
 from prepare_ml_data import prepare_data

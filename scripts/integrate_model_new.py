@@ -5,8 +5,8 @@ from peft import PeftModel
 from map_categories import map_columns_to_categories
 
 # Paths
-model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/recommendation_model"
-t5_model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/t5-small"
+model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/models/recommendation_model"
+t5_model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/models/t5-small"
 reference_excel_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/reference_excel.xlsx"
 
 # Load model and tokenizer
