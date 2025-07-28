@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Header } from "@/components/Header";
-import { 
-  Upload, 
-  FileText, 
-  Activity, 
-  Heart, 
-  TrendingUp, 
+import {
+  Upload,
+  FileText,
+  Activity,
+  Heart,
+  TrendingUp,
   AlertTriangle,
   CheckCircle,
   Download,
@@ -80,71 +80,71 @@ export default function Dashboard() {
     }
   };
 
-const handleUploadSubmit = async () => {
-  if (!file) {
-    toast({
-      title: "No file selected",
-      description: "Please select a CSV or Excel file to upload.",
-      variant: "destructive",
-    });
-    return;
-  }
-
-  setIsUploading(true);
-  setShowResults(false);
-  setUploadProgress(0);
-
-  // Fake progress updater
-  const progressInterval = setInterval(() => {
-    setUploadProgress((oldProgress) => {
-      if (oldProgress >= 90) {
-        return oldProgress;
-      }
-      return oldProgress + 10;
-    });
-  }, 1200);
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const response = await fetch("http://localhost:8000/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    clearInterval(progressInterval);
-    setUploadProgress(100); // Upload complete
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "File processing failed.");
+  const handleUploadSubmit = async () => {
+    if (!file) {
+      toast({
+        title: "No file selected",
+        description: "Please select a CSV or Excel file to upload.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    const result = await response.json();
-    console.log("Processed result:", result.data);
-    
-    setPatientData(result.data);
-
-    setShowResults(true);
-    toast({
-      title: "Analysis Complete!",
-      description: "Your health data has been processed and analyzed.",
-    });
-  } catch (error: any) {
-    clearInterval(progressInterval);
+    setIsUploading(true);
+    setShowResults(false);
     setUploadProgress(0);
 
-    console.error("Upload error:", error);
-    toast({
-      title: "Upload Failed",
-      description: error.message || "Something went wrong.",
-      variant: "destructive",
-    });
-  } finally {
-    setIsUploading(false);
-  }
-};
+    // Fake progress updater
+    const progressInterval = setInterval(() => {
+      setUploadProgress((oldProgress) => {
+        if (oldProgress >= 90) {
+          return oldProgress;
+        }
+        return oldProgress + 10;
+      });
+    }, 1200);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("http://localhost:8000/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      clearInterval(progressInterval);
+      setUploadProgress(100); // Upload complete
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "File processing failed.");
+      }
+
+      const result = await response.json();
+      console.log("Processed result:", result.data);
+
+      setPatientData(result.data);
+
+      setShowResults(true);
+      toast({
+        title: "Analysis Complete!",
+        description: "Your health data has been processed and analyzed.",
+      });
+    } catch (error: any) {
+      clearInterval(progressInterval);
+      setUploadProgress(0);
+
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload Failed",
+        description: error.message || "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
 
   const getStatusColor = (status: string) => {
@@ -196,8 +196,8 @@ const handleUploadSubmit = async () => {
     patientData.tests.forEach((test) => {
       rows.push([`Test: ${test.name}`]);
       rows.push(["Parameter", "Value"]);
-      Object.entries(test.values).forEach(([param, value]) => {
-        rows.push([param, value]);
+      Object.entries(test.values).forEach(([param, value]: any) => {
+        rows.push([param, value.value]);
       });
       rows.push(["Recommendation", `"${test.recommendation}"`]);
       rows.push([]); // spacing between tests
@@ -222,7 +222,7 @@ const handleUploadSubmit = async () => {
   return (
     <div className="min-h-screen bg-background">
       <Header isAuthenticated={true} onLogout={() => navigate("/")} />
-      
+
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Welcome Section */}
         <div className="flex items-center justify-between">
@@ -259,7 +259,7 @@ const handleUploadSubmit = async () => {
                   className="cursor-pointer"
                 />
               </div>
-              
+
               {file && (
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                   <FileText className="h-4 w-4" />
@@ -268,7 +268,7 @@ const handleUploadSubmit = async () => {
                 </div>
               )}
 
-              <Button 
+              <Button
                 onClick={handleUploadSubmit}
                 disabled={!file || isUploading}
                 className="w-full bg-gradient-medical shadow-medical"
@@ -331,8 +331,8 @@ const handleUploadSubmit = async () => {
             {/* Health Tests */}
             <div className="space-y-6">
               {patientData && patientData?.tests?.map((test: any, index: any) => (
-                <Card 
-                  key={index} 
+                <Card
+                  key={index}
                   className={`shadow-card-hover border-l-4 ${getStatusBg(test.status)} animate-fade-in`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
@@ -352,17 +352,17 @@ const handleUploadSubmit = async () => {
                     {/* Test Values */}
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {Object.entries(test.values).map(([key, value]: any) => (
-  <div key={key} className="space-y-1">
-    <p className="text-sm font-medium">{key}</p>
-    <div className="flex items-center justify-between">
-      <span className={`text-lg font-bold ${getStatusColor(value.status)}`}>
-        {value.value}
-      </span>
-      {/* Optionally display range here if you want */}
-      {/* <span className="text-xs text-muted-foreground">Normal: {val.range}</span> */}
-    </div>
-  </div>
-))}
+                        <div key={key} className="space-y-1">
+                          <p className="text-sm font-medium">{key}</p>
+                          <div className="flex items-center justify-between">
+                            <span className={`text-lg font-bold ${getStatusColor(value.status)}`}>
+                              {value.value}
+                            </span>
+                            {/* Optionally display range here if you want */}
+                            {/* <span className="text-xs text-muted-foreground">Normal: {val.range}</span> */}
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
                     {/* Recommendation */}
@@ -383,11 +383,11 @@ const handleUploadSubmit = async () => {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
               {showResults && <Button className="bg-gradient-medical shadow-medical" onClick={() => handleDownload()} >
-                <Download className="mr-2 h-4 w-4"/>
+                <Download className="mr-2 h-4 w-4" />
                 Download Report
               </Button>
               }
-              <Button 
+              <Button
                 variant="outline"
                 onClick={() => setShowResults(false)}
               >
