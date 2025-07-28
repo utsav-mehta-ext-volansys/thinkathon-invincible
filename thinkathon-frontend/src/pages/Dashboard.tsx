@@ -102,7 +102,7 @@ const handleUploadSubmit = async () => {
       }
       return oldProgress + 10;
     });
-  }, 900);
+  }, 1200);
 
   const formData = new FormData();
   formData.append("file", file);
