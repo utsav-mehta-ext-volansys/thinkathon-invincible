@@ -58,8 +58,8 @@ def generate_recommendation(prompt, max_length=150):
 
 # Build final structured output
 def build_structured_recommendations(df):
-    reference_sheets = load_reference_excel(reference_excel_path)
-    category_mapping = map_columns_to_categories(df.columns.tolist())
+    reference_sheets = load_reference_excel(reference_excel_path)  # your reference data mapping
+    category_mapping = map_columns_to_categories(df.columns.tolist())  # map categories to params
     results = []
 
     for _, row in df.iterrows():
@@ -75,9 +75,8 @@ def build_structured_recommendations(df):
                 if param in row and pd.notna(row[param]):
                     val = row[param]
                     prompt_parts.append(f"{param}: {val}")
-                    values[param] = str(val)
 
-            if not values:
+            if not prompt_parts:
                 continue
 
             prompt = "analyze: " + "; ".join(prompt_parts)
@@ -86,10 +85,36 @@ def build_structured_recommendations(df):
             except Exception as e:
                 recommendation = f"Error generating recommendation: {e}"
 
+            rec_lower = recommendation.lower()
+
+            param_statuses = []
+
+            for param in category_cols:
+                if param in row and pd.notna(row[param]):
+                    val_str = str(row[param])
+                    # Determine param status based on keywords
+                    if "above" in rec_lower or "below" in rec_lower or "high" in rec_lower or "low" in rec_lower:
+                        status = "warning"
+                    else:
+                        status = "normal"
+
+                    values[param] = {
+                        "value": val_str,
+                        "status": status
+                    }
+                    param_statuses.append(status)
+
+            # Determine root status for test based on param statuses
+            if "warning" in param_statuses:
+                status = "warning"
+            else:
+                status = "normal"
+
             results.append({
                 "name": category,
                 "values": values,
-                "recommendation": recommendation
+                "recommendation": recommendation,
+                "status": status
             })
 
     return {"tests": results}

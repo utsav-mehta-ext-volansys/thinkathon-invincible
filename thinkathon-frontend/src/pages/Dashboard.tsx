@@ -69,6 +69,7 @@ export default function Dashboard() {
   const [isUploading, setIsUploading] = useState(false);
   const [showResults, setShowResults] = useState(false); // Show mock data by default
   const [patientData, setPatientData] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -79,7 +80,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleUploadSubmit = async () => {
+const handleUploadSubmit = async () => {
   if (!file) {
     toast({
       title: "No file selected",
@@ -91,6 +92,17 @@ export default function Dashboard() {
 
   setIsUploading(true);
   setShowResults(false);
+  setUploadProgress(0);
+
+  // Fake progress updater
+  const progressInterval = setInterval(() => {
+    setUploadProgress((oldProgress) => {
+      if (oldProgress >= 90) {
+        return oldProgress;
+      }
+      return oldProgress + 10;
+    });
+  }, 900);
 
   const formData = new FormData();
   formData.append("file", file);
@@ -101,6 +113,9 @@ export default function Dashboard() {
       body: formData,
     });
 
+    clearInterval(progressInterval);
+    setUploadProgress(100); // Upload complete
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || "File processing failed.");
@@ -108,10 +123,8 @@ export default function Dashboard() {
 
     const result = await response.json();
     console.log("Processed result:", result.data);
+    
     setPatientData(result.data);
-
-    // Optional: Store data for results page
-    // setProcessedData(result.data);
 
     setShowResults(true);
     toast({
@@ -119,6 +132,9 @@ export default function Dashboard() {
       description: "Your health data has been processed and analyzed.",
     });
   } catch (error: any) {
+    clearInterval(progressInterval);
+    setUploadProgress(0);
+
     console.error("Upload error:", error);
     toast({
       title: "Upload Failed",
@@ -214,10 +230,10 @@ export default function Dashboard() {
             <h1 className="text-3xl font-bold text-foreground">Health Dashboard</h1>
             <p className="text-muted-foreground">Monitor your health metrics and get personalized insights</p>
           </div>
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+          {/* <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4" />
             <span>Last updated: {patientData && patientData?.lastUpdate}</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Upload Section */}
@@ -274,9 +290,9 @@ export default function Dashboard() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Processing your data...</span>
-                    <span>75%</span>
+                    <span>{uploadProgress}%</span>
                   </div>
-                  <Progress value={75} className="h-2" />
+                  <Progress value={uploadProgress} className="h-2" />
                 </div>
               )}
             </CardContent>
@@ -336,18 +352,17 @@ export default function Dashboard() {
                     {/* Test Values */}
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {Object.entries(test.values).map(([key, value]: any) => (
-                        <div key={key} className="space-y-1">
-                          <p className="text-sm font-medium">{key}</p>
-                          <div className="flex items-center justify-between">
-                            <span className={`text-lg font-bold ${getStatusColor(value.status)}`}>
-                              {value} {value.unit}
-                            </span>
-                            {/* <span className="text-xs text-muted-foreground">
-                              Normal: {value.range}
-                            </span> */}
-                          </div>
-                        </div>
-                      ))}
+  <div key={key} className="space-y-1">
+    <p className="text-sm font-medium">{key}</p>
+    <div className="flex items-center justify-between">
+      <span className={`text-lg font-bold ${getStatusColor(value.status)}`}>
+        {value.value}
+      </span>
+      {/* Optionally display range here if you want */}
+      {/* <span className="text-xs text-muted-foreground">Normal: {val.range}</span> */}
+    </div>
+  </div>
+))}
                     </div>
 
                     {/* Recommendation */}
