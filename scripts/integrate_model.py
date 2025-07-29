@@ -6,8 +6,9 @@ import os
 from map_categories import map_columns_to_categories
 
 # Load fine-tuned model and tokenizer
-model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/models/recommendation_model"
-t5_model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/models/t5-small"
+base_dir = os.path.expanduser("~/Utsav's/Thinkathon/Code/thinkathon-invincible")
+model_path = os.path.join(base_dir, "recommendation_model")
+t5_model_path = os.path.join(base_dir, "t5-small")
 tokenizer = T5Tokenizer.from_pretrained(model_path)
 base_model = T5ForConditionalGeneration.from_pretrained(t5_model_path)
 model = PeftModel.from_pretrained(base_model, model_path)

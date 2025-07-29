@@ -2,6 +2,9 @@ import pandas as pd
 import os
 from map_categories import map_columns_to_categories
 from prepare_ml_data import prepare_data
+base_dir = os.path.expanduser("~/Utsav's/Thinkathon/Code/thinkathon-invincible")
+file_path_ref = os.path.join(base_dir, "reference_excel.xlsx")
+
 
 def read_file(filepath):
     ext = os.path.splitext(filepath)[1].lower()
@@ -91,7 +94,7 @@ def main():
         return
 
     try:
-        reference_sheets = read_ref_file("C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/reference_excel.xlsx")
+        reference_sheets = read_ref_file(file_path_ref)
     except Exception as e:
         print(f"Error reading reference file: {e}")
         return

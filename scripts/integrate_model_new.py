@@ -3,11 +3,12 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 import torch
 from peft import PeftModel
 from map_categories import map_columns_to_categories
-
+import os
+base_dir = os.path.expanduser("~/Utsav's/Thinkathon/Code/thinkathon-invincible")
 # Paths
-model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/models/recommendation_model"
-t5_model_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/models/t5-small"
-reference_excel_path = "C:/Users/Utsav.Mehta/Thinkathon/thinkathon-invincible/reference_excel.xlsx"
+model_path = os.path.join(base_dir, "recommendation_model")
+t5_model_path = os.path.join(base_dir, "t5-small")
+reference_excel_path = os.path.join(base_dir, "reference_excel.xlsx")
 
 # Load model and tokenizer
 tokenizer = T5Tokenizer.from_pretrained(model_path)
