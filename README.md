@@ -48,11 +48,8 @@ Component          | Command                              | Notes
 -------------------|--------------------------------------|----------------------------------------
 Google T5-small    | Download manually                    | Required locally before running scripts.
 Backend            | pip install -r requirement.txt       | Starts backend API server.
-                                                          | uvicorn main:app --reload
 Model Fine-tune    | python mode_peft_finetuned.py        | Generates the recommendation model.
 Frontend           | npm install                          | Starts frontend development server.
-                   | npm run dev                          |
-
 ---
 
 Additional Notes
